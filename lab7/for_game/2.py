@@ -7,9 +7,9 @@ screen=pygame.display.set_mode((w,h))
 
 
 #playlist
-music='krasivaya.mp3'
+music='dozhd.mp3'
 music2='flowers.mp3'
-music3='dozhd.mp3'
+music3='krasivaya.mp3'
 playlist=[music,music2,music3]
 pygame.mixer.music.load(music)
 pygame.mixer.music.play(-1)
