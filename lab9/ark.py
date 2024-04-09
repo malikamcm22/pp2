@@ -3,23 +3,24 @@ import pygame
 import random
 pygame.init()
 
-
+#размер и кол кадров в секунду
 W, H = 1200, 800
 FPS = 60
 
+#окно игры и частота кадров в игре
 screen = pygame.display.set_mode((W, H), pygame.RESIZABLE)
 clock = pygame.time.Clock()
 done = False
 bg = (0, 0, 0)
 
-#paddle
+#paddle\ параметры игры 
 paddleW = 150
 paddleH = 25
 paddleSpeed = 20
 paddle = pygame.Rect(W // 2 - paddleW // 2, H - paddleH - 30, paddleW, paddleH)
 
 
-#Ball
+#Ball\ начальное положение\ направление движения
 ballRadius = 20
 ballSpeed = 6
 ball_rect = int(ballRadius * 2 ** 0.5)
@@ -27,7 +28,7 @@ ball = pygame.Rect(random.randrange(ball_rect, W - ball_rect), H // 2, ball_rect
 dx, dy = 1, -1
 
 
-#Game score
+#Game score\ для отображения счета
 game_score = 0
 game_score_fonts = pygame.font.SysFont('comicsansms', 40)
 game_score_text = game_score_fonts.render(f'Your game score is: {game_score}', True, (0, 0, 0))
@@ -38,6 +39,7 @@ game_score_rect.center = (210, 20)
 #Catching sound
 collision_sound = pygame.mixer.Sound('catch.mp3')
 
+# обнаружения мяча с другими объектами, с платформой
 def detect_collision(dx, dy, ball, rect):
     if dx > 0:
         delta_x = ball.right - rect.left
@@ -57,13 +59,14 @@ def detect_collision(dx, dy, ball, rect):
     return dx, dy
 
 
-#block settings
+#block settings\ блоки, для набора очков
 block_list = [pygame.Rect(10 + 120 * i, 50 + 70 * j,
         100, 50) for i in range(10) for j in range (4)]
 color_list = [(random.randrange(0, 255), 
     random.randrange(0, 255),  random.randrange(0, 255))
               for i in range(10) for j in range(4)] 
 print(block_list)
+
 #Game over Screen
 losefont = pygame.font.SysFont('comicsansms', 40)
 losetext = losefont.render('Game Over', True, (255, 255, 255))
@@ -76,37 +79,38 @@ wintext = losefont.render('You win yay', True, (0, 0, 0))
 wintextRect = wintext.get_rect()
 wintextRect.center = (W // 2, H // 2)
 
-
+# главный игровой цикл \ все события в игре отрабатывает\ при закрытии игровой цикл завершается 
 while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
-
+#отрисовка блоков в поле
     screen.fill(bg)
     
-    # print(next(enumerate(block_list)))
+    # print(next(enumerate(block_list)))\ платформа и мяч
     
     [pygame.draw.rect(screen, color_list[color], block)
      for color, block in enumerate (block_list)] #drawing blocks
+    # отрисовка мяча и платформы 
     pygame.draw.rect(screen, pygame.Color(255, 255, 255), paddle)
     pygame.draw.circle(screen, pygame.Color(255, 0, 0), ball.center, ballRadius)
     # print(next(enumerate (block_list)))
 
-    #Ball movement
+    #Ball movement\ обновление положения мяча с его скоростью и направлением
     ball.x += ballSpeed * dx
     ball.y += ballSpeed * dy
 
-    #Collision left 
+    #Collision left \ столкновение мяча с границами поля
     if ball.centerx < ballRadius or ball.centerx > W - ballRadius:
         dx = -dx
     #Collision top
     if ball.centery < ballRadius + 50: 
         dy = -dy
-    #Collision with paddle
+    #Collision with paddle\ мяч с платформой\ то есть столкновение
     if ball.colliderect(paddle) and dy > 0:
         dx, dy = detect_collision(dx, dy, ball, paddle)
 
-    #Collision blocks
+    #Collision blocks\ столкновение мяча с блоками\ удаление блока \ счет увеличивается
     hitIndex = ball.collidelist(block_list)
 
     if hitIndex != -1:
@@ -116,24 +120,25 @@ while not done:
         game_score += 1
         collision_sound.play()
         
-    #Game score
+    #Game score\ обновление текста счета 
     game_score_text = game_score_fonts.render(f'Your game score is: {game_score}', True, (255, 255, 255))
     screen.blit(game_score_text, game_score_rect)
     
-    #Win/lose screens
+    #Win/lose screens \ отображение экран 
     if ball.bottom > H:
         screen.fill((0, 0, 0))
         screen.blit(losetext, losetextRect)
     elif not len(block_list):
         screen.fill((255,255, 255))
         screen.blit(wintext, wintextRect)
-    # print(pygame.K_LEFT)
+
+    # print(pygame.K_LEFT) \ управление платформой с помощью клавиш
     #Paddle Control
     key = pygame.key.get_pressed()
     if key[pygame.K_LEFT] and paddle.left > 0:
         paddle.left -= paddleSpeed
     if key[pygame.K_RIGHT] and paddle.right < W:
         paddle.right += paddleSpeed
-
+# отображение игрового окна и управление частотой кадров 
     pygame.display.flip()
     clock.tick(FPS)

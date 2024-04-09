@@ -46,7 +46,7 @@ indigo = (75, 0, 130)
 current_color = white
 color_of_panel = (176, 224, 230)
 
-# groups of colors
+# groups of colors\ для панели цветов
 
 shades_of_red = [red, maroon, purple, magenta]
 shades_of_blue = [blue, cyan, navy, indigo]
@@ -54,7 +54,7 @@ shades_of_green = [green, lime, teal, olive]
 basic_colors = [black, white, gray, brown]
 list_of_colors = [basic_colors, shades_of_red,
                   shades_of_green, shades_of_blue,]
-
+# отрисовка фигур
 # function for circle
 
 
@@ -79,7 +79,7 @@ def ellipse(display, color, x, y, width, height):
 def line(display, color, start_position, end_position):
     pygame.draw.line(display, color, start_position, end_position)
 
-# palette
+# palette\ отображения панели цветов 
 
 
 def panel_of_palette():
@@ -92,7 +92,7 @@ def panel_of_palette():
     pygame.display.update()
 
 
-# setting the display
+# setting the display\ настройка элементов управления на экране и кнопка выбора
 
 
 def control_panel():
